@@ -33,6 +33,7 @@ function Utilities:Create(obj,properties,children)
     local properties = properties or {}
     local children = children or {}
 
+    -- I don't like borders and having to put BorderSizePixel = 0 each time i so ok
     if obj:IsA("Frame") or obj:IsA("TextLabel") or obj:IsA("TextButton") or obj:IsA("ScrollingFrame") or obj:IsA("ImageLabel") then
         obj.BorderSizePixel = 0
     end
