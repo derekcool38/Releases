@@ -4,7 +4,7 @@ local ESP = {
     Boxes = true,
     BoxShift = CFrame.new(0,-1.5,0),
 	BoxSize = Vector3.new(4,6,0),
-    Color = Color3.fromRGB(255,175,170),
+    Color = Color3.fromRGB(221, 170, 172),
     FaceCamera = false,
     Names = true,
     TeamColor = true,
@@ -103,6 +103,7 @@ function ESP:AddObjectListener(parent, options)
                         PrimaryPart = type(options.PrimaryPart) == "string" and c:WaitForChild(options.PrimaryPart) or type(options.PrimaryPart) == "function" and options.PrimaryPart(c),
                         Color = type(options.Color) == "function" and options.Color(c) or options.Color,
                         ColorDynamic = options.ColorDynamic,
+                        Size = options.Size or self.BoxSize,
                         Name = type(options.CustomName) == "function" and options.CustomName(c) or options.CustomName,
                         IsEnabled = options.IsEnabled,
                         RenderInNil = options.RenderInNil
@@ -300,7 +301,7 @@ function ESP:Add(obj, options)
 		Color = box.Color,
 		Center = true,
 		Outline = true,
-        Size = 19,
+        Size = 17,
         Visible = self.Enabled and self.Names
 	})
 	
