@@ -27,13 +27,13 @@ function Utilities:TweenDistance(obj,speed,complete,...)
     end
 end
 
--- venyx kek
+-- venyx :o
 function Utilities:Create(obj,properties,children)
     local obj = Instance.new(obj)
     local properties = properties or {}
     local children = children or {}
 
-    -- I don't like borders and having to put BorderSizePixel = 0 each time i so ok
+    -- I don't like borders and having to put BorderSizePixel = 0 each time so ok
     if obj:IsA("Frame") or obj:IsA("TextLabel") or obj:IsA("TextButton") or obj:IsA("ScrollingFrame") or obj:IsA("ImageLabel") then
         obj.BorderSizePixel = 0
     end
@@ -109,11 +109,12 @@ function Utilities:Teleport(x,y,z)
     PS.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(x,y,z)
 end
 
-function Utilities:Noti(title,text,duration)
+function Utilities:Noti(title,text,duration,icon)
     game:GetService("StarterGui"):SetCore("SendNotification",{
         Title = title;
         Text = text;
         Duration = duration;
+        Icon = icon;
     })
 end
 
