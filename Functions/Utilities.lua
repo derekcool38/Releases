@@ -1,6 +1,5 @@
--- Useful stuff i use for my UIs and Scripts
+--My Tools you can say that i use to make my scripts and User-Interfaces 
 local Utilities = {}
-local PS = game:GetService("Players")
 
 function Utilities:Tween(obj,properties,duration,complete,...)
     local Tween = game:GetService("TweenService"):Create(obj,TweenInfo.new(duration,...),properties)
@@ -27,7 +26,7 @@ function Utilities:TweenDistance(obj,speed,complete,...)
     end
 end
 
--- venyx :o
+-- venyx gg
 function Utilities:Create(obj,properties,children)
     local obj = Instance.new(obj)
     local properties = properties or {}
@@ -47,6 +46,16 @@ function Utilities:Create(obj,properties,children)
     end
 
     return obj
+end
+
+function Utilities:Remote(path,args,type,service)
+    local type = type or "FireServer"
+    local service = service or "ReplicatedStorage"
+    if type == "FireServer" then
+        game:GetService(service)[path]:FireServer(unpack(args)) 
+    elseif type == "InvokeServer" then
+        game:GetService(service)[path]:InvokeServer(unpack(args))
+    end
 end
 
 function Utilities:Dragify(onj,Speed)
@@ -107,15 +116,6 @@ end
 
 function Utilities:Teleport(x,y,z)
     PS.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(x,y,z)
-end
-
-function Utilities:Noti(title,text,duration,icon)
-    game:GetService("StarterGui"):SetCore("SendNotification",{
-        Title = title;
-        Text = text;
-        Duration = duration;
-        Icon = icon;
-    })
 end
 
 return Utilities
