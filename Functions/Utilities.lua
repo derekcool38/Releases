@@ -1,5 +1,6 @@
 --My Tools you can say that i use to make my scripts and User-Interfaces 
 local Utilities = {}
+local PS = game:GetService("Players")
 
 function Utilities:Tween(obj,properties,duration,complete,...)
     local Tween = game:GetService("TweenService"):Create(obj,TweenInfo.new(duration,...),properties)
