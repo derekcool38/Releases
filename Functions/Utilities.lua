@@ -1,43 +1,58 @@
---My Tools you can say that i use to make my scripts and User-Interfaces 
+--[[
+    These are the Stuff i use to make my Interfaces and Scripts
+    Made this to make my scripts more clean and faster to make
+    You can use this if you want but don't claim it as yours althought this is easy
+    I recently just made this more organized into catergorys so its easier to find what you need
+    Also i don't like elseif statements so you might see alot of if statements
+    --derek38#6168--
+]]
+
+--Services--
+local StarterGui = game:GetService("StarterGui")
+local TweenService = game:GetService("TweenService")
+local PlayerService = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
+local MarketService = game:GetService("MarketplaceService")
+local UserInputService = game:GetService("UserInputService")
+
+--Starting--
 local Utilities = {}
-local PS = game:GetService("Players")
 
-function Utilities:Tween(obj,properties,duration,complete,...)
-    local Tween = game:GetService("TweenService"):Create(obj,TweenInfo.new(duration,...),properties)
-    
+--Tweening--
+function Utilities:Tween(obj,properties,duration,complete,...) --Basic Tweening Function--
+    local Tween = TweenService:Create(obj,TweenInfo.new(duration,...),properties)
+
     if obj and properties and duration then
-        Tween:Play()
-    end
-
-    if complete then 
-        Tween.Completed:Wait()
-    end
-end
-
-function Utilities:TweenDistance(obj,speed,complete,...)
-    local Info = TweenInfo.new((obj.Position - PS.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude / speed,...)
-    local Tween = game:GetService("TweenService"):Create(PS.LocalPlayer.Character.HumanoidRootPart,Info,{CFrame = obj})
-
-    if obj and speed then
         Tween:Play()
     end
 
     if complete then
         Tween.Completed:Wait()
     end
+
 end
 
--- venyx gg
-function Utilities:Create(obj,properties,children)
+function Utilities:TweenDistance(obj,speed,complete,...) --Distance Tweening or so. Gets the Distance Between the Object and Player and Divides it by the speed. With "Normal" Tweening it will slowdown once the obj/player is close to the desired destination. but not with this cause Magntiude is cool (Don't Know How to Explain It) --
+    local Information = TweenInfo.new((obj.Position - PlayerService.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").Position).Magnitude / speed,...)
+    local Tween = TweenService:Create(PlayerService.LocalPlayer.Character.HumanoidRootPart,Information,{CFrame = obj})
+    
+    if obj and speed then
+        Tween:Play()
+    end
+
+    if complete then
+        Tween.Completed:Wait()
+        return true
+    end
+
+end
+
+--Instancing--
+function Utilities:Create(obj,properties,children) --Creating a Instance. From Venyx gg. Makes writing a new ui Library Clean and Easy--
     local obj = Instance.new(obj)
     local properties = properties or {}
     local children = children or {}
-
-    -- I don't like borders and having to put BorderSizePixel = 0 each time so ok
-    if obj:IsA("Frame") or obj:IsA("TextLabel") or obj:IsA("TextButton") or obj:IsA("ScrollingFrame") or obj:IsA("ImageLabel") then
-        obj.BorderSizePixel = 0
-    end
-
+    
     for i,v in pairs(properties) do
         obj[i] = v
     end
@@ -46,77 +61,179 @@ function Utilities:Create(obj,properties,children)
         v.Parent = obj
     end
 
+    pcall(function()
+        obj.BorderSizePixel = 0 --I Don't Like Borders--
+    end)
+
     return obj
 end
 
-function Utilities:Remote(path,args,type,service)
+function Utilities:Draw(obj,properties) --Creates a Drawing Object--
+    if not Drawing then
+        return warn"Your Exploit Doesn't Support the Drawing Library"
+    end
+
+    local obj = Drawing.new(obj)
+    local properties = properties or {}
+
+    for i,v in pairs(properties) do
+        obj[i] = v
+    end
+
+    return obj
+end
+
+--Player(s) Info--
+function Utilities:Gamepass(gamepass,player) --Checks if a player owns the desired gamepassed. Returns true or false--
+    local player = player or PlayerService.LocalPlayer.UserId
+    return MarketService:UserOwnsGamePassAsync(player,gamepass)
+end
+
+function Utilities:Profile(userid,type,size)
+    --defaults--
+    local userid = userid or PlayerService.LocalPlayer.UserId
+    local type = type or Enum.ThumbnailType.AvatarBust
+    local size = size or Enum.ThumbnailSize.Size420x420
+
+    return PlayerService:GetUserThumbnailAsync(userid,type,size)
+end
+
+--Exploit Support--
+function Utilities:ExploitSupports(c,callback) --Checks if your exploti supports a function. Ngl kinda useless snce you can just do if functionname then end but this is fancy so why not--
+    local callback = callback or function() end
+
+    if c then
+        callback(true)
+        return true
+    end
+
+    callback(false)
+    return false
+end
+
+function Utilities:GetRequest() --Getting the request function from a exploit. I don't know all of them so some might not be here--
+    local c = request or http_request or syn.request or Request or httprequest or http
+    return c
+end
+
+--web stuff--
+function Utilities:Load(url) --loadstring but simple i guess--
+    Utilities:ExploitSupports(loadstring,function(c) if c == true then loadstring(game:HttpGet(url))() else return warn"Your exploit doesn't support loadstring xd bad" end end)
+end
+
+function Utilities:jsonrequest(url,body)
+    Utilities:GetRequest()({
+        Url = url;
+        Method = "POST",
+        Headers = {["Content-Type"] = "application/json"},
+        Body = HttpService:JSONEncode(body)
+    })
+end
+
+--self--
+function Utilities:SetHumanoid(type,v) --Should be obv but for the dumbies its like game.players.locaplayerwalkspeed = 38 but easier--
+    PlayerService.LocalPlayer.Character:FindFirstChild("Humanoid")[type] = v
+end
+
+function Utilities:Anchor(c) --Anchores the HumanoidRootPart depending if you put true or false--
+    PlayerService.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").Anchored = c
+end
+
+function Utilities:Health() --Returns your health--
+    return PlayerService.LocalPlayer.Character:FindFirstChild("Humanoid").Health
+end
+
+function Utilities:GetHealth(path,type,c) --Useful for getting the health of a npc object or another player--
+    local type = type or "Health"
+    local c = c or "Humanoid"
+    return path:FindFirstChild(c)[type]
+end
+
+function Utilities:Magnitude(obj) --Returns the Magntiude/Distance of the Object from you--
+    return (obj.Position - PlayerService.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").Position).Magnitude
+end
+
+function Utilities:Teleport(x,y,z) --Teleporting to the desired coordinates--
+    PlayerService.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(x,y,z)
+end
+
+function Utilities:TP(plr) --Teleporting to a Player--
+    PlayerService.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = PlayerService[plr].Character:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0,0,2)
+end
+
+--Remotes--
+function Utilities:Remote(name,args,type,path) --Firing a remote but cleaner--
+    --defaults--
     local type = type or "FireServer"
-    local service = service or "ReplicatedStorage"
+    local args = args or {}
+    local path = path or game:GetService("ReplicatedStorage")
+
     if type == "FireServer" then
-        game:GetService(service)[path]:FireServer(unpack(args)) 
-    elseif type == "InvokeServer" then
-        game:GetService(service)[path]:InvokeServer(unpack(args))
+        path[name]:FireServer(unpack(args))
     end
+
+    if type == "InvokeServer" then
+        path[name]:InvokeServer(unpack(args))
+    end
+
 end
 
-function Utilities:Dragify(onj,Speed)
-    dragToggle = nil
-    dragSpeed = Speed or 1
-    dragInput = nil
-    dragStart = nil
-    dragPos = nil
-    
-    function updateInput(input)
-    Delta = input.Position - dragStart
-    Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + Delta.X, startPos.Y.Scale, startPos.Y.Offset + Delta.Y)
-    game:GetService("TweenService"):Create(onj, TweenInfo.new(dragSpeed), {Position = Position}):Play()
-    end
-    
-    onj.InputBegan:Connect(function(input)
-    if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
-    dragToggle = true
-    dragStart = input.Position
-    startPos = onj.Position
-    input.Changed:Connect(function()
-    if (input.UserInputState == Enum.UserInputState.End) then
-    dragToggle = false
-    end
-    end)
-    end
-    end)
-    
-    onj.InputChanged:Connect(function(input)
-    if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-    dragInput = input
-    end
-    end)
-    
-    game:GetService("UserInputService").InputChanged:Connect(function(input)
-    if (input == dragInput and dragToggle) then
-    updateInput(input)
-    end
-    end)
-end
-
+--Time--
 function Utilities:Time()
-    local Date = os.date("*t")
-    return ("%02d:%02d"):format(((Date.hour % 24) - 1) % 12 + 1, Date.min)
+    return os.date("*t")["hour"]..":"..os.date("*t")["min"]..":"..os.date("*t")["sec"]
 end
 
-function Utilities:Load(url)
-    loadstring(game:HttpGet(url))()
+function Utilities:Date()
+    return os.date("*t")["month"].."/"..os.date("*t")["day"].."/"..os.date("*t")["year"]
 end
 
-function Utilities:SetHumanoid(type,value)
-    PS.LocalPlayer.Character.Humanoid[type] = value
+--Interface Tools--
+function Utilities:Dragify(obj,speed)
+    local dragToggle = nil
+    local dragSpeed = speed or 1
+    local dragInput = nil
+    local dragStart = nil
+    local dragPos = nil
+    
+    local function updateInput(input)
+        local Delta = input.Position - dragStart
+        Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + Delta.X, startPos.Y.Scale, startPos.Y.Offset + Delta.Y)
+        TweenService:Create(obj, TweenInfo.new(dragSpeed), {Position = Position}):Play()
+    end
+    
+    obj.InputBegan:Connect(function(input)
+        if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+            dragToggle = true
+            dragStart = input.Position
+            startPos = obj.Position
+
+            input.Changed:Connect(function()
+                if (input.UserInputState == Enum.UserInputState.End) then
+                    dragToggle = false
+                end
+            end)
+            
+        end
+    end)
+    
+    obj.InputChanged:Connect(function(input)
+        if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            dragInput = input
+        end
+    end)
+    
+    UserInputService.InputChanged:Connect(function(input)
+        if (input == dragInput and dragToggle) then
+            updateInput(input)
+        end
+    end)
+    
 end
 
-function Utilities:TP(plr)
-    PS.LocalPlayer.Character.HumanoidRootPart.CFrame = PS[plr].Character.HumanoidRootPart.CFrame * CFrame.new(0,0,1)
+function Utilities:Noti(properties)
+    StarterGui:SetCore("SendNotification",properties)
 end
 
-function Utilities:Teleport(x,y,z)
-    PS.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(x,y,z)
-end
+print("derek38 was here")
 
 return Utilities
