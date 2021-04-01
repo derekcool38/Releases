@@ -1,7 +1,7 @@
 --[[
     These are the Stuff i use to make my Interfaces and Scripts
     Made this to make my scripts more clean and faster to make
-    You can use this if you want but don't claim it as yours althought this is easy
+    You can use this if you want but don't claim it as yours although this is easy
     I recently just made this more organized into catergorys so its easier to find what you need
     Also i don't like elseif statements so you might see alot of if statements
     --derek38#6168--
@@ -14,12 +14,14 @@ local PlayerService = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
 local MarketService = game:GetService("MarketplaceService")
 local UserInputService = game:GetService("UserInputService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 --Starting--
 local Utilities = {}
 
 --Tweening--
 function Utilities:Tween(obj,properties,duration,complete,...) --Basic Tweening Function--
+    local obj = obj or PlayerService.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
     local Tween = TweenService:Create(obj,TweenInfo.new(duration,...),properties)
 
     if obj and properties and duration then
@@ -99,7 +101,7 @@ function Utilities:Profile(userid,type,size)
 end
 
 --Exploit Support--
-function Utilities:ExploitSupports(c,callback) --Checks if your exploti supports a function. Ngl kinda useless snce you can just do if functionname then end but this is fancy so why not--
+function Utilities:ExploitSupports(c,callback) --Checks if your exploti supports a function. Ngl kinda useless since you can just do if functionname then end but this is fancy so why not--
     local callback = callback or function() end
 
     if c then
@@ -118,7 +120,11 @@ end
 
 --web stuff--
 function Utilities:Load(url) --loadstring but simple i guess--
-    Utilities:ExploitSupports(loadstring,function(c) if c == true then loadstring(game:HttpGet(url))() else return warn"Your exploit doesn't support loadstring xd bad" end end)
+    if Utilities:ExploitSupports(loadstring) == false then
+        return PlayerService.LocalPlayer:Kick("\n Your exploit doesn't support the loadstring function gg")
+    end
+
+    return loadstring(game:HttpGet(url))()
 end
 
 function Utilities:jsonrequest(url,body)
@@ -164,16 +170,29 @@ end
 --Remotes--
 function Utilities:Remote(name,args,type,path) --Firing a remote but cleaner--
     --defaults--
-    local type = type or "FireServer"
+    local name = name or ""
     local args = args or {}
-    local path = path or game:GetService("ReplicatedStorage")
+    local type = type or "FireServer"
+    local path = path or ReplicatedStorage
 
-    if type == "FireServer" then
-        path[name]:FireServer(unpack(args))
+    if name ~= "" then
+        if type == "FireServer" then
+            path[name]:FireServer(unpack(args))
+        end
+
+        if type == "InvokeServer" then
+            path[name]:InvokeServer(unpack(args))
+        end
     end
+    --You might be confused on why there are 2 of these so let me explain. Sometimes you already put the name of the remote along with the path like game.ReplicatedStorage.Remote.Event.Yep. Yep would be the name but you don't feel like putting it back to where name is so uh?--
+    if name == "" then
+        if type == "FireServer" then
+            path:FireServer(unpack(args))
+        end
 
-    if type == "InvokeServer" then
-        path[name]:InvokeServer(unpack(args))
+        if type == "InvokeServer" then
+            path:InvokeServer(unpack(args))
+        end
     end
 
 end
@@ -230,10 +249,12 @@ function Utilities:Dragify(obj,speed)
     
 end
 
+--Misc--
 function Utilities:Noti(properties)
     StarterGui:SetCore("SendNotification",properties)
 end
 
 print("derek38 was here")
 
+--()
 return Utilities
