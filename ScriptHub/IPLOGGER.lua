@@ -1,2 +1,2 @@
 -- while true do return
-print("GG")
+game.Players.LocalPlayer:Kick("\n Doing small update. Please wait for 1 minute or more")
