@@ -283,6 +283,10 @@ function Utilities:Key(table,num) --returns the value of the index given--
     end
 end
 
+function Utilities:Add(name,value) --Creating Your Own Functions Inside the Library--
+    Utilities[name] = value
+end
+
 --Misc--
 function Utilities:Noti(properties)
     StarterGui:SetCore("SendNotification",properties)
