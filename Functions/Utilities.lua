@@ -149,7 +149,7 @@ function Utilities:Health() --Returns your health--
     return PlayerService.LocalPlayer.Character:FindFirstChild("Humanoid").Health
 end
 
-function Utilities:GetHealth(path,type,c) --Useful for getting the health of a npc object or another player--
+function Utilities:GetHealth(path,type,c) --Useful for getting the health of a npc object or another player | Again this is just a fancy way of doing it and it makes my code less ugly--
     local type = type or "Health"
     local c = c or "Humanoid"
     return path:FindFirstChild(c)[type]
@@ -165,6 +165,19 @@ end
 
 function Utilities:TP(plr) --Teleporting to a Player--
     PlayerService.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = PlayerService[plr].Character:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0,0,2)
+end
+
+function Utilities:Equip(tool,path) --Equiping a Tool--
+    local path = path or PlayerService.LocalPlayer.Backpack 
+
+    for i,v in pairs(path:GetChildren()) do
+        if v:IsA("Tool") and v.Name == tool and v.Parent ~= nil then -- Some checks to prevent errors like when you die and Backpack is not a instance yet--
+            PlayerService.LocalPlayer.Character.Humanoid:EquipTool(tool)
+            return true
+        end
+    end
+
+    return false
 end
 
 --Remotes--
@@ -198,11 +211,11 @@ function Utilities:Remote(name,args,type,path) --Firing a remote but cleaner--
 end
 
 --Time--
-function Utilities:Time()
+function Utilities:Time() --Returns the current hour/minute/second
     return os.date("*t")["hour"]..":"..os.date("*t")["min"]..":"..os.date("*t")["sec"]
 end
 
-function Utilities:Date()
+function Utilities:Date() -- Returns the current month/day/year
     return os.date("*t")["month"].."/"..os.date("*t")["day"].."/"..os.date("*t")["year"]
 end
 
@@ -247,6 +260,27 @@ function Utilities:Dragify(obj,speed)
         end
     end)
     
+end
+
+--Tables--
+function Utilities:Index(table,value) --Usefull (atleast for me) for removing stuff from a table like a player from a dropdown. Example : table.remove(List,Utilities:Index(List,game.Players.LocalPlayer.Name))
+    for i,v in pairs(table) do
+        if v == value then
+            return i
+        end
+    end
+
+    return false
+end
+
+function Utilities:Key(table,num) --returns the value of the index given--
+    for i,v in pairs(table) do
+        if i == num then
+            return v
+        end
+    end
+
+    return false
 end
 
 --Misc--
