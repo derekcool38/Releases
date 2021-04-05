@@ -180,6 +180,10 @@ function Utilities:Equip(tool,path) --Equiping a Tool--
     return false
 end
 
+function Utilities:char()
+    return PlayerService.LocalPlayer.Character
+end
+
 --Remotes--
 function Utilities:Remote(name,args,type,path) --Firing a remote but cleaner--
     --defaults--
@@ -269,8 +273,6 @@ function Utilities:Index(table,value) --Usefull (atleast for me) for removing st
             return i
         end
     end
-
-    return false
 end
 
 function Utilities:Key(table,num) --returns the value of the index given--
@@ -279,8 +281,6 @@ function Utilities:Key(table,num) --returns the value of the index given--
             return v
         end
     end
-
-    return false
 end
 
 --Misc--
