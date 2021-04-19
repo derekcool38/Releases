@@ -299,27 +299,47 @@ function Utilities:Add(name,value) --Creating Your Own Functions Inside the Libr
 end
 
 --Bot--
-function Utilities:Path(obj,check) --PathFinding Function--
+function Utilities:Path(obj,check,Type) --PathFinding Function--
+    local Type = Type or "Walking"
+
     local Path = PathFindingService:CreatePath()
     Path:ComputeAsync(PlayerService.LocalPlayer.Character.HumanoidRootPart.Position,obj.Position)
     local Waypoints = Path:GetWaypoints()
 
     for i,v in pairs(Waypoints) do
-        if check then
+        if check and Type == "Walking" then
             PlayerService.LocalPlayer.Character.Humanoid:MoveTo(v.Position)
         end
 
-        if v.Action == Enum.PathWaypointAction.Jump then
+        if check and Type == "Tweening" then
+            Utilities:TweenDistance(CFrame.new(v.Position),getgenv().Tweening_Speed or 100,true)
+        end
+
+        if v.Action == Enum.PathWaypointAction.Jump and check and Type == "Walking" then
             PlayerService.LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
         end
 
-        if check then
-            PlayerService.LocalPlayer.Character.Humanoid.MoveToFinished:Wait(1)
+        if check and Type == "Walking" then
+            PlayerService.LocalPlayer.Character.Humanoid.MoveToFinished:Wait(.2)
         end
     end
 
-    print("[Utilities] Completed Path")
+    warn("[Utilities] Completed Path")
     return true
+end
+
+function Utilities:Find(path,obj)
+    if typeof(path) ~= "Instance" then
+        return Utilities:Noti({Title = "Utilities",Text = tostring(Path).." Is not a Instance"})
+    end
+
+    for i,v in pairs(path:GetChildren()) do
+        if v:FindFirstChild(obj) then
+            return v
+        end
+    end
+
+    return false
 end
 
 --Misc--
@@ -335,6 +355,8 @@ function Utilities:Kick(reason,player) --Ignore The player Part--
     local player = player or PlayerService.LocalPlayer.Name
     PlayerService[player]:Kick("\n"..reason)
 end
+
+Utilities:Path(Utilities:char().HumanoidRootPart.CFrame * CFrame.new(1,111,1),true)
 
 print("derek38 was here")
 
