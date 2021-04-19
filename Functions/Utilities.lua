@@ -15,6 +15,7 @@ local HttpService = game:GetService("HttpService")
 local MarketService = game:GetService("MarketplaceService")
 local UserInputService = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local PathFindingService = game:GetService("PathfindingService")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 
 --Starting--
@@ -269,7 +270,7 @@ function Utilities:Key(table,num) --returns the value of the index given--
     end 
 end
 
-function Utilities:Insert(Path,Table,Check) --Inserting children/values into a table--
+function Utilities:Insert(Path,Table,Check,Sort) --Inserting children/values into a table--
     if typeof(Path) ~= "Instance" then
         return Utilities:Noti({Title = "Utilities",Text = tostring(Path).." Is not a Instance"})
     end
@@ -284,13 +285,41 @@ function Utilities:Insert(Path,Table,Check) --Inserting children/values into a t
         if Check ~= true then
             table.insert(Table,v.Name)
         end
-
     end
+
+    if Sort then
+        table.sort(Table)
+    end
+    
 end
 
 function Utilities:Add(name,value) --Creating Your Own Functions Inside the Library. Useless but i was bored--
     local value = value or function () end
     table.insert(Utilities,value)
+end
+
+--Bot--
+function Utilities:Path(obj,check) --PathFinding Function--
+    local Path = PathFindingService:CreatePath()
+    Path:ComputeAsync(PlayerService.LocalPlayer.Character.HumanoidRootPart.Position,obj.Position)
+    local Waypoints = Path:GetWaypoints()
+
+    for i,v in pairs(Waypoints) do
+        if check then
+            PlayerService.LocalPlayer.Character.Humanoid:MoveTo(v.Position)
+        end
+
+        if v.Action == Enum.PathWaypointAction.Jump then
+            PlayerService.LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+        end
+
+        if check then
+            PlayerService.LocalPlayer.Character.Humanoid.MoveToFinished:Wait(1)
+        end
+    end
+
+    print("[Utilities] Completed Path")
+    return true
 end
 
 --Misc--
