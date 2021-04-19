@@ -356,8 +356,6 @@ function Utilities:Kick(reason,player) --Ignore The player Part--
     PlayerService[player]:Kick("\n"..reason)
 end
 
-Utilities:Path(Utilities:char().HumanoidRootPart.CFrame * CFrame.new(1,111,1),true)
-
 print("derek38 was here")
 
 --()
